@@ -1,0 +1,3 @@
+name = UConn Banner
+description = The 2013 version of the UConn Banner. Adds the header to any site using the Bootstrap framework.
+core = 7.x
