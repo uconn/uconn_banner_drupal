@@ -1,52 +1,44 @@
 <?php
 
+/**
+ * The uconn banner uses Liquid, so we need to parse and render
+ * the banner using the php port of Liquid, php-liquid.
+ */
+require(dirname(__FILE__) . '/php-liquid/Liquid.class.php');
+
+
+/**
+ * Add the rendered version of the banner css code.
+ */
 function uconn_banner_preprocess_html(&$variables) {
-   drupal_add_css(drupal_get_path('module', 'uconn_banner') . '/uconn_banner.css');
+   drupal_add_css(drupal_get_path('module', 'uconn_banner') . '/banner/_site/banner.css');
 }
 
-
-
-/*function uconn_banner_theme($existing, $type, $theme, $path){
-  return array(
-    'uconn_banner' => array(
-      'variables' => array('content' => NULL),
-      'file' => 'uconn_banner.tpl.php', // place you file in 'theme' folder of you module folder
-      'path' => drupal_get_path('module', 'uconn_banner')
-    )
-  );
-}
-*/
-
-function uconn_banner_output_callback($node) {
-  return theme('uconn_banner_output', array('node' => $node));
-}
-
-function uconn_banner_output($variables) {
-  $node = $variables['node'];
-  $build = node_view($node);
-  $output = drupal_render($build);
-  return $output;
-}
-
-function uconn_banner_theme($existing, $type, $theme, $path) {
-  return array(
-    'uconn_banner_output' => array(
-      'template' => 'uconn_banner',
-      'path' => drupal_get_path('module', 'uconn_banner')
-    ), 
-  );  
-}
 
 function uconn_banner_page_build (&$page) {
 
-    if (!path_is_admin(current_path())) {
-        $path = drupal_get_path('module', 'uconn_banner');
 
-        $page['page_top']['uconn_banner'] = array(
-           '#weight' => 0, 
-           '#markup' => uconn_banner_output_callback($node)
-        );       
-    }
+  /**
+   * Variables that we want to inject into the banner.
+   */ 
+  $vars = array( 
+    'site' => array(
+      'name' => variable_get('site_name', false),
+      'department' => theme_get_setting('uconn_of_organization'),
+      'department_url' => theme_get_setting('uconn_of_organization_url'),
+      'search' => render( module_invoke('search', 'block_view', 'search') )
+    )
+  );
 
+
+  if (!path_is_admin(current_path())) {
+      
+      $liquid = new LiquidTemplate();
+      
+      $page['page_top']['uconn_banner'] = array(
+         '#weight' => 0, 
+         '#markup' => $liquid->parse(file_get_contents(dirname(__FILE__) . '/banner/_includes/banner.html'))->render($vars)
+      );       
+  }
 
 }
