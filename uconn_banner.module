@@ -15,7 +15,7 @@ function uconn_banner_preprocess_html(&$variables) {
 }
 
 
-function uconn_banner_page_build ($page) {
+function uconn_banner_page_build (&$page) {
 
   $search_block = module_invoke('search', 'block_view', 'search');
 
