@@ -15,8 +15,9 @@ function uconn_banner_preprocess_html(&$variables) {
 }
 
 
-function uconn_banner_page_build (&$page) {
+function uconn_banner_page_build ($page) {
 
+  $search_block = module_invoke('search', 'block_view', 'search');
 
   /**
    * Variables that we want to inject into the banner.
@@ -26,7 +27,7 @@ function uconn_banner_page_build (&$page) {
       'name' => variable_get('site_name', false),
       'department' => theme_get_setting('uconn_of_organization'),
       'department_url' => theme_get_setting('uconn_of_organization_url'),
-      'search' => render( module_invoke('search', 'block_view', 'search') )
+      'search' => render( $search_block )
     )
   );
 
